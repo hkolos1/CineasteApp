@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="favoriteMovies" type="id" />
+    <item name="recentMovies" type="id" />
+    <item name="movieImage" type="id" />
+    <item name="movieTitle" type="id" />
+</resources>
