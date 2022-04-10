@@ -10,8 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Cineaste">
-        <activity
+        android:theme="@style/Theme.Cinaeste">
+    <activity
             android:name=".MovieDetailActivity"
             android:exported="false" />
         <activity

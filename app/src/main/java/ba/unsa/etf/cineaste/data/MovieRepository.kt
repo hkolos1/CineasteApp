@@ -10,4 +10,7 @@ object MovieRepository {
     fun getRecentMovies() : List<Movie> {
         return recentMovies();
     }
+    fun getSimilarMovies(): Map<String, List<String>> {
+        return similarMovies()
+    }
 }
