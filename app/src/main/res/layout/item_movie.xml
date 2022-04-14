@@ -21,12 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
+            android:transitionName="poster"
             app:srcCompat="@drawable/picture1" />
 
         <TextView
             android:id="@+id/movieTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="title"
             android:layout_gravity="center_horizontal"
             android:layout_margin="5dp"
             android:textAlignment="center"

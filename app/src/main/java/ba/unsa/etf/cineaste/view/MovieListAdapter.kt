@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.unsa.etf.cineaste.R
 import ba.unsa.etf.cineaste.data.Movie
 
+
 class MovieListAdapter(
     private var movies: List<Movie>,
-    private val onItemClicked: (movie:Movie) -> Unit
+    private val onItemClicked: (movie:Movie,view1:View,view2:View) -> Unit
 ) : RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -33,7 +34,7 @@ class MovieListAdapter(
             .getIdentifier("picture1", "drawable", context.getPackageName())
         holder.movieImage.setImageResource(id)
 
-        holder.itemView.setOnClickListener{ onItemClicked(movies[position]) }
+        holder.itemView.setOnClickListener{ onItemClicked(movies[position],holder.movieImage,holder.movieTitle) }
 
     }
     fun updateMovies(movies: List<Movie>) {

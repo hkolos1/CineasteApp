@@ -3,60 +3,63 @@ package ba.unsa.etf.cineaste
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
+import android.transition.Fade
+import android.view.Window
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import ba.unsa.etf.cineaste.data.Movie
 import ba.unsa.etf.cineaste.view.FavoriteMoviesFragment
-import ba.unsa.etf.cineaste.view.MovieListAdapter
 import ba.unsa.etf.cineaste.view.RecentMoviesFragment
 import ba.unsa.etf.cineaste.view.SearchFragment
-import ba.unsa.etf.cineaste.viewmodel.MovieListViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigation: BottomNavigationView
     private val br: BroadcastReceiver = ConnectivityBroadcastReceiver()
     private val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+    private val mOnItemSelectedListener = NavigationBarView.OnItemSelectedListener{ item ->
         when (item.itemId) {
             R.id.navigation_favorites -> {
                 val favoritesFragment = FavoriteMoviesFragment.newInstance()
                 openFragment(favoritesFragment)
-                return@OnNavigationItemSelectedListener true
+                return@OnItemSelectedListener true
             }
             R.id.navigation_recent -> {
                 val recentFragments = RecentMoviesFragment.newInstance()
                 openFragment(recentFragments)
-                return@OnNavigationItemSelectedListener true
+                return@OnItemSelectedListener true
             }
             R.id.navigation_search -> {
                 val searchFragment = SearchFragment.newInstance(" ")
                 openFragment(searchFragment)
-                return@OnNavigationItemSelectedListener true
+                return@OnItemSelectedListener true
             }
         }
         false
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
+        with(window) {
+            requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+            // postavit ćemo exitTranziciju
+            exitTransition = Fade()
+        }
         setContentView(R.layout.activity_main)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        bottomNavigation= findViewById(R.id.navigationView)
-        bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        bottomNavigation.selectedItemId= R.id.navigation_favorites
+        // inside your activity (if you did not enable transitions in your theme)
+
+        bottomNavigation = findViewById(R.id.navigationView)
+        bottomNavigation.setOnItemSelectedListener(mOnItemSelectedListener)
+        bottomNavigation.selectedItemId = R.id.navigation_favorites
         val favoritesFragment = FavoriteMoviesFragment.newInstance()
         openFragment(favoritesFragment)
-        if(intent?.action == Intent.ACTION_SEND && intent?.type == "text/plain")
+        if (intent?.action == Intent.ACTION_SEND && intent?.type == "text/plain")
             handleSendText(intent)
+
     }
 
 
@@ -84,4 +87,5 @@ class MainActivity : AppCompatActivity() {
             openFragment(searchFragment)
         }
     }
+
 }
