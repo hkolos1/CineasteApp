@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
             // postavit ćemo exitTranziciju
             exitTransition = Fade()
+
         }
         setContentView(R.layout.activity_main)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
