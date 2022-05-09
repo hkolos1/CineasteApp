@@ -10,20 +10,30 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.unsa.etf.cineaste.R
 import ba.unsa.etf.cineaste.viewmodel.MovieDetailViewModel
 
-class SimilarFragment(movieName:String): Fragment() {
+class SimilarFragment(movieName:String,movieId:Long?): Fragment() {
     private var movieName:String = movieName
-    private var movieDetailViewModel =  MovieDetailViewModel()
+    private var movieId:Long? = movieId
+    private lateinit var movieRV:RecyclerView
+    private var movieList= listOf<String>()
+    private lateinit var actorsRVSimpleAdapter:SimpleStringAdapter
+    private var movieDetailViewModel =  MovieDetailViewModel(null,this@SimilarFragment::similarRetrieved,null)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         var view: View = inflater.inflate(R.layout.similar_fragment, container, false)
-        var movieList = movieDetailViewModel.getSimilarByTitle(movieName)
-        var movieRV = view.findViewById<RecyclerView>(R.id.listSimilar)
+        movieRV = view.findViewById<RecyclerView>(R.id.listSimilar)
+        movieList = movieName?.let { movieDetailViewModel.getSimilarByTitle(it) }!!
         movieRV.layoutManager = LinearLayoutManager(activity)
-        var actorsRVSimpleAdapter = SimpleStringAdapter(movieList)
+        actorsRVSimpleAdapter = SimpleStringAdapter(movieList)
         movieRV.adapter = actorsRVSimpleAdapter
+        movieId?.let { movieDetailViewModel.getSimilarMoviesById(it) }
         return view
+    }
+    fun similarRetrieved(similar:MutableList<String>){
+        movieList=similar
+        actorsRVSimpleAdapter.list = similar;
+        actorsRVSimpleAdapter.notifyDataSetChanged();
     }
 }
