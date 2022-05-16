@@ -19,7 +19,7 @@ sealed class Result<out R> {
 
 object MovieRepository {
 
-    private const val tmdb_api_key : String = BuildConfig.TMDB_API_KEY
+    private const val tmdb_api_key = BuildConfig.TMDB_API_KEY
     fun getFavoriteMovies() : List<Movie> {
         return favoriteMovies();
     }

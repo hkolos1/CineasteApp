@@ -13,7 +13,7 @@ import java.net.URL
 
 object ActorMovieRepository {
 
-    private const val tmdb_api_key : String = BuildConfig.TMDB_API_KEY
+    private const val tmdb_api_key = BuildConfig.TMDB_API_KEY
     fun getActorMovies():Map<String,List<String>>{
         return movieActors()
     }
