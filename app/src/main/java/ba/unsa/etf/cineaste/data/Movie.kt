@@ -44,6 +44,7 @@ data class Movie (
             return Movie(parcel)
         }
 
+
         override fun newArray(size: Int): Array<Movie?> {
             return arrayOfNulls(size)
         }

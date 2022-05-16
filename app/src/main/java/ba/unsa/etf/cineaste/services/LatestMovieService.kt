@@ -34,7 +34,6 @@ class LatestMovieService : Service() {
         return null
     }
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startService()
         return START_STICKY

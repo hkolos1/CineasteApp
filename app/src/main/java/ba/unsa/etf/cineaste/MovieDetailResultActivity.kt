@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 
 class MovieDetailResultActivity : AppCompatActivity() {
 
-
     private  var movie= Movie(0, "Test", "Test", "Test", "Test", "Test", "Test", "Test")
     private lateinit var title : TextView
     private lateinit var overview : TextView

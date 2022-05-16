@@ -130,7 +130,6 @@ object MovieRepository {
             } catch (e: JSONException) {
                 return@withContext Result.Error(Exception("Cannot parse JSON"))
             }
-
         }
     }
 }
