@@ -19,6 +19,7 @@ import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
+
     private lateinit var bottomNavigation: BottomNavigationView
     private val br: BroadcastReceiver = ConnectivityBroadcastReceiver()
     private val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
