@@ -84,15 +84,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
             <TextView
-                android:id="@+id/movie_genre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#757575"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/movie_release_date"
-                app:layout_constraintTop_toBottomOf="@id/movie_release_date" />
-
-            <TextView
                 android:id="@+id/movie_website"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="movie_release_date,movie_poster_card,movie_genre,movie_website"
+                app:constraint_referenced_ids="movie_release_date,movie_poster_card,movie_website"
                 tools:layout_editor_absoluteY="362dp" />
 
             <TextView

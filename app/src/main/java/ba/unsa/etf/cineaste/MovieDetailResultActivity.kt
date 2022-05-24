@@ -11,11 +11,10 @@ import com.bumptech.glide.Glide
 
 class MovieDetailResultActivity : AppCompatActivity() {
 
-    private  var movie= Movie(0, "Test", "Test", "Test", "Test", "Test", "Test", "Test")
+    private  var movie= Movie(0, "Test", "Test", "Test", "Test", "Test", "Test")
     private lateinit var title : TextView
     private lateinit var overview : TextView
     private lateinit var releaseDate : TextView
-    private lateinit var genre : TextView
     private lateinit var website : TextView
     private lateinit var poster : ImageView
     private lateinit var backdrop : ImageView
@@ -29,7 +28,6 @@ class MovieDetailResultActivity : AppCompatActivity() {
         title = findViewById(R.id.movie_title)
         overview = findViewById(R.id.movie_overview)
         releaseDate = findViewById(R.id.movie_release_date)
-        genre = findViewById(R.id.movie_genre)
         poster = findViewById(R.id.movie_poster)
         website = findViewById(R.id.movie_website)
         backdrop = findViewById(R.id.movie_backdrop)
@@ -44,21 +42,14 @@ class MovieDetailResultActivity : AppCompatActivity() {
     private fun populateDetails() {
         title.text=movie.title
         releaseDate.text=movie.releaseDate
-        genre.text=movie.genre
         website.text=movie.homepage
         overview.text=movie.overview
         val context: Context = poster.getContext()
-        var id = 0;
-        if (movie.genre!==null)
-            id = context.getResources()
-                .getIdentifier(movie.genre, "drawable", context.getPackageName())
-        if (id===0) id=context.getResources()
-            .getIdentifier("picture1", "drawable", context.getPackageName())
         Glide.with(context)
             .load(posterPath + movie.posterPath)
             .placeholder(R.drawable.picture1)
-            .error(id)
-            .fallback(id)
+            .error(R.drawable.picture1)
+            .fallback(R.drawable.picture1)
             .into(poster);
         var backdropContext: Context = backdrop.getContext()
         Glide.with(backdropContext)

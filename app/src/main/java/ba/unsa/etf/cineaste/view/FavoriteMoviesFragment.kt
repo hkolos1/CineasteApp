@@ -19,7 +19,7 @@ class FavoriteMoviesFragment : Fragment() {
 
     private lateinit var favoriteMovies: RecyclerView
     private lateinit var favoriteMoviesAdapter: MovieListAdapter
-    private var movieListViewModel =  MovieListViewModel(null,null)
+    private var movieListViewModel =  MovieListViewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view =  inflater.inflate(R.layout.favorites_fragment, container, false)

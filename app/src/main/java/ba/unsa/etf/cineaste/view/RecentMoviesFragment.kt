@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ class RecentMoviesFragment : Fragment() {
 
     private lateinit var recentMovies: RecyclerView
     private lateinit var recentMoviesAdapter: MovieListAdapter
-    private var movieListViewModel =  MovieListViewModel(null,null)
+    private var movieListViewModel =  MovieListViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,19 +33,35 @@ class RecentMoviesFragment : Fragment() {
         recentMovies.layoutManager = GridLayoutManager(activity, 2)
         recentMoviesAdapter = MovieListAdapter(arrayListOf()) { movie,view1,view2 -> showMovieDetails(movie,view1,view2) }
         recentMovies.adapter=recentMoviesAdapter
-        recentMoviesAdapter.updateMovies(movieListViewModel.getRecentMovies())
+        /*  movieListViewModel.getUpcoming(
+              onSuccess = ::onSuccess,
+              onError = ::onError
+          )*/
+        movieListViewModel.getUpcoming2( onSuccess = ::onSuccess,
+            onError = ::onError)
         return view;
     }
     companion object {
         fun newInstance(): RecentMoviesFragment = RecentMoviesFragment()
     }
+
+    fun onSuccess(movies:List<Movie>){
+        val toast = Toast.makeText(context, "Upcoming movies found", Toast.LENGTH_SHORT)
+        toast.show()
+        recentMoviesAdapter.updateMovies(movies)
+    }
+    fun onError() {
+        val toast = Toast.makeText(context, "Search error", Toast.LENGTH_SHORT)
+        toast.show()
+    }
+
     private fun showMovieDetails(movie: Movie, view1: View,view2:View) {
         val intent = Intent(activity, MovieDetailActivity::class.java).apply {
-            putExtra("movie_title", movie.title)
+            putExtra("movie_id", movie.id)
         }
         val options = ActivityOptions
-            .makeSceneTransitionAnimation(activity,  UtilPair.create(view1, "poster"),
-                UtilPair.create(view2, "title"))
+            .makeSceneTransitionAnimation(activity,  android.util.Pair.create(view1, "poster"),
+                android.util.Pair.create(view2, "title"))
         startActivity(intent, options.toBundle())
     }
 }

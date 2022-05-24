@@ -34,7 +34,7 @@ class SearchFragment : Fragment() {
     ): View? {
         var view = inflater.inflate(R.layout.search_fragment, container, false)
         searchText = view.findViewById(R.id.searchText)
-        movieListViewModel = MovieListViewModel(this@SearchFragment::searchDone,this@SearchFragment::onError)
+        movieListViewModel = MovieListViewModel()
         searchButton = view.findViewById(R.id.searchButton)
         arguments?.getString("search")?.let {
             searchText.setText(it)
@@ -52,10 +52,11 @@ class SearchFragment : Fragment() {
     private fun onClick() {
         val toast = Toast.makeText(context, "Search start", Toast.LENGTH_SHORT)
         toast.show()
-        movieListViewModel.search(searchText.text.toString())
+        movieListViewModel.search(searchText.text.toString(),onSuccess = ::onSuccess,
+            onError = ::onError)
     }
-    fun searchDone(movies:List<Movie>){
-        val toast = Toast.makeText(context, "Search done", Toast.LENGTH_SHORT)
+    fun onSuccess(movies:List<Movie>){
+        val toast = Toast.makeText(context, "Upcoming movies found", Toast.LENGTH_SHORT)
         toast.show()
         searchMoviesAdapter.updateMovies(movies)
     }
@@ -63,11 +64,13 @@ class SearchFragment : Fragment() {
         val toast = Toast.makeText(context, "Search error", Toast.LENGTH_SHORT)
         toast.show()
     }
+
     private fun showMovieDetails(movie: Movie, view1: View,view2:View) {
         val intent = Intent(activity, MovieDetailActivity::class.java).apply {
             putExtra("movie_id", movie.id)
         }
-        val options = ActivityOptions.makeSceneTransitionAnimation(activity,  Pair.create(view1, "poster"),
+        val options = ActivityOptions
+            .makeSceneTransitionAnimation(activity,  Pair.create(view1, "poster"),
                 Pair.create(view2, "title"))
         startActivity(intent, options.toBundle())
     }
