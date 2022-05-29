@@ -12,7 +12,8 @@ import ba.unsa.etf.cineaste.R
 import ba.unsa.etf.cineaste.data.Movie
 import ba.unsa.etf.cineaste.viewmodel.MovieDetailViewModel
 
-class SimilarFragment(movieName: String, movieId: Long?): Fragment() {
+class SimilarFragment(movieName: String, movieId: Long?,favourite:Boolean): Fragment() {
+    private var favourite = favourite
     private var movieName:String = movieName
     private var movieId:Long? = movieId
 
@@ -32,8 +33,13 @@ class SimilarFragment(movieName: String, movieId: Long?): Fragment() {
         movieRV.layoutManager = LinearLayoutManager(activity)
         actorsRVSimpleSimilarAdapter = SimpleSimilarStringAdapter(movieList)
         movieRV.adapter = actorsRVSimpleSimilarAdapter
-        movieId?.let { movieDetailViewModel.getSimilarMoviesById(it,onSuccess = ::onSuccess,
-            onError = ::onError) }
+        if(favourite){
+            movieId?.let { movieDetailViewModel.getSimilarMoviesByIdDB(requireContext(),it,onSuccess = ::onSuccess, onError = ::onError) }
+        }else{
+            movieId?.let { movieDetailViewModel.getSimilarMoviesById(it,onSuccess = ::onSuccess,
+                onError = ::onError) }
+        }
+
         return view
     }
 

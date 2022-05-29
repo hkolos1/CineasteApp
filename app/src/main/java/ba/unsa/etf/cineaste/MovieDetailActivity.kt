@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -31,18 +33,30 @@ class MovieDetailActivity : AppCompatActivity() {
     private lateinit var poster : ImageView
     private lateinit var backdrop : ImageView
     private lateinit var shareButton : FloatingActionButton
+    private lateinit var addFavorite : Button
+    private lateinit var deleteFavorite : Button
     private val posterPath = "https://image.tmdb.org/t/p/w780"
     private val backdropPath = "https://image.tmdb.org/t/p/w500"
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when(item.itemId){
             R.id.actorsItem -> {
-                var actorsFragment = ActorsFragment(movie.title,movie.id)
+                var actorsFragment:ActorsFragment
+                if(addFavorite.visibility== View.GONE){
+                    actorsFragment = ActorsFragment(movie.title,movie.id,true)
+                } else{
+                    actorsFragment = ActorsFragment(movie.title,movie.id,false)
+                }
                 openFragment(actorsFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.similarMItem -> {
-                var similarFragment = SimilarFragment(movie.title,movie.id)
+                var similarFragment:SimilarFragment
+                if(addFavorite.visibility==View.GONE) {
+                    similarFragment = SimilarFragment(movie.title, movie.id, true)
+                }else{
+                    similarFragment  = SimilarFragment(movie.title,movie.id, false)
+                }
                 openFragment(similarFragment)
                 return@OnNavigationItemSelectedListener true
             }
@@ -61,7 +75,8 @@ class MovieDetailActivity : AppCompatActivity() {
         website = findViewById(R.id.movie_website)
         shareButton = findViewById(R.id.shareButton)
         backdrop = findViewById(R.id.movie_backdrop)
-
+        addFavorite = findViewById(R.id.favorites)
+        deleteFavorite = findViewById(R.id.delete)
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         website.setOnClickListener{
@@ -73,6 +88,13 @@ class MovieDetailActivity : AppCompatActivity() {
         shareButton.setOnClickListener{
             shareOverview()
         }
+
+        addFavorite.setOnClickListener{
+            writeDB()
+        }
+        deleteFavorite.setOnClickListener{
+            deleteDB()
+        }
         val extras = intent.extras
 
         if (extras != null) {
@@ -80,9 +102,15 @@ class MovieDetailActivity : AppCompatActivity() {
                 movie = movieDetailViewModel.getMovieByTitle(extras.getString("movie_title", ""))
                 populateDetails()
             }
-            else if (extras.containsKey("movie_id")){
+            else if (extras.containsKey("movie_id") && !extras.containsKey("exists") ){
                 movieDetailViewModel.getMovie(extras.getLong("movie_id"),onSuccess = ::onSuccess,
                     onError = ::onError )
+            }
+            else if (extras.containsKey("movie_id") && extras.containsKey("exists") ){
+                movieDetailViewModel.getMovieFromDB(applicationContext,extras.getLong("movie_id"),onSuccess = ::onSuccess,
+                    onError = ::onError )
+                addFavorite.visibility= View.GONE
+                deleteFavorite.visibility = View.VISIBLE
             }
         } else {
             finish()
@@ -97,11 +125,22 @@ class MovieDetailActivity : AppCompatActivity() {
         val toast = Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT)
         toast.show()
     }
-    fun movieRetrieved(movie:Movie){
-        this.movie =movie;
-        populateDetails()
+
+    fun writeDB(){
+        movieDetailViewModel.writeDB(applicationContext,this.movie,onSuccess = ::onSuccess1,
+            onError = ::onError)
     }
 
+    fun deleteDB(){
+        movieDetailViewModel.deleteDB(applicationContext,this.movie,onSuccess = ::onSuccess1, onError = ::onError)
+    }
+    fun onSuccess1(message:String){
+        val toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
+        toast.show()
+        addFavorite.visibility= View.GONE
+        deleteFavorite.visibility = View.VISIBLE
+
+    }
     private fun populateDetails() {
         title.text=movie.title
         releaseDate.text=movie.releaseDate

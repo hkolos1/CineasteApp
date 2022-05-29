@@ -4,4 +4,6 @@
     <item name="recentMovies" type="id" />
     <item name="movieImage" type="id" />
     <item name="movieTitle" type="id" />
+    <item name="delete" type="id" />
+    <item name="favorites" type="id" />
 </resources>

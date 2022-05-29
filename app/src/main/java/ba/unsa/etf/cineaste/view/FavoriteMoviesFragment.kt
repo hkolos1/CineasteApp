@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,15 +28,28 @@ class FavoriteMoviesFragment : Fragment() {
         favoriteMovies.layoutManager = GridLayoutManager(activity, 2)
         favoriteMoviesAdapter = MovieListAdapter(arrayListOf()) { movie,view1,view2 -> showMovieDetails(movie,view1,view2) }
         favoriteMovies.adapter=favoriteMoviesAdapter
-        favoriteMoviesAdapter.updateMovies(movieListViewModel.getFavoriteMovies())
+        context?.let {
+            movieListViewModel.getFavorites(
+                it,onSuccess = ::onSuccess,
+                onError = ::onError)
+        }
         return view;
+    }
+
+    fun onSuccess(movies:List<Movie>){
+        favoriteMoviesAdapter.updateMovies(movies)
+    }
+    fun onError() {
+        val toast = Toast.makeText(context, "Error", Toast.LENGTH_SHORT)
+        toast.show()
     }
     companion object {
         fun newInstance(): FavoriteMoviesFragment = FavoriteMoviesFragment()
     }
     private fun showMovieDetails(movie: Movie, view1: View,view2:View) {
         val intent = Intent(activity, MovieDetailActivity::class.java).apply {
-            putExtra("movie_title", movie.title)
+            putExtra("movie_id", movie.id)
+            putExtra("exists", true)
         }
         val options = ActivityOptions
             .makeSceneTransitionAnimation(activity,  UtilPair.create(view1, "poster"),

@@ -12,7 +12,8 @@ import ba.unsa.etf.cineaste.R
 import ba.unsa.etf.cineaste.data.Cast
 import ba.unsa.etf.cineaste.viewmodel.MovieDetailViewModel
 
-class ActorsFragment(movieName:String,movieId:Long?): Fragment() {
+class ActorsFragment(movieName:String,movieId:Long?,favourite:Boolean): Fragment() {
+    private val favourite = favourite
     private var movieName:String = movieName
     private var movieId:Long? = movieId
     private lateinit var movieRV:RecyclerView
@@ -31,8 +32,13 @@ class ActorsFragment(movieName:String,movieId:Long?): Fragment() {
         movieRV.layoutManager = LinearLayoutManager(activity)
         actorsRVSimpleSimilarAdapter = SimpleCastStringAdapter(actorsList)
         movieRV.adapter = actorsRVSimpleSimilarAdapter
-        movieId?.let { movieDetailViewModel.getActorsById(it,onSuccess = ::onSuccess,
-            onError = ::onError) }
+        if(favourite){
+            movieId?.let { movieDetailViewModel.getActorsByIdDB(requireContext(),it,onSuccess = ::onSuccess,onError = ::onError) }
+        }else{
+            movieId?.let { movieDetailViewModel.getActorsById(it,onSuccess = ::onSuccess,
+                onError = ::onError) }
+        }
+
         return view
     }
 

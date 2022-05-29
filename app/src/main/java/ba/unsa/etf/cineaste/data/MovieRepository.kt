@@ -1,5 +1,6 @@
 package ba.unsa.etf.cineaste.data
 
+import android.content.Context
 import ba.unsa.etf.cineaste.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,10 +16,85 @@ sealed class Result<out R> {
 object MovieRepository {
 
     private const val tmdb_api_key = BuildConfig.TMDB_API_KEY
-    fun getFavoriteMovies() : List<Movie> {
-        return favoriteMovies();
-    }
 
+    suspend fun getFavoriteMovies(context: Context) : List<Movie> {
+        return withContext(Dispatchers.IO) {
+            var db = AppDatabase.getInstance(context)
+            var movies = db!!.movieDao().getAll()
+            return@withContext movies
+        }
+    }
+    suspend fun deleteMovie(context: Context, movie: Movie) : String?{
+        return withContext(Dispatchers.IO){
+            try {
+                var db = AppDatabase.getInstance(context)
+                val cast = db!!.movieDao().getMovieAndCastById(movie.id)
+                db!!.castDao().deleteCast(cast.cast)
+                val similar = db!!.movieDao().getSimilarMoviesById(movie.id)
+                val similarPairs = similar.similarMovies.map { similar -> SimilarMovies(movie.id,similar.id) }
+                for(similarPair in similarPairs){
+                    db!!.similarMoviesDao().deleteSimilar(similarPair)
+                }
+                db!!.similarMoviesDao().deleteSimilarMovies(similar.similarMovies)
+                db!!.movieDao().delete(movie)
+
+                return@withContext "Obrisano"
+            }catch (error:Exception){
+                return@withContext null
+            }
+        }
+    }
+    suspend fun writeFavorite(context: Context,movie:Movie) : String?{
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = AppDatabase.getInstance(context)
+                movie.favourite=1
+                db!!.movieDao().insertAll(movie)
+                val response = ActorMovieRepository.getCast(movie.id)
+                val cast = response?.cast
+                if(cast != null){
+                    for (castX in cast){
+                        castX.fromMovieId=movie.id
+                        db!!.castDao().insertAll(castX)
+                    }
+                }
+                val similarResponse = MovieRepository.getSimilarMovies(movie.id)
+                val simiar = similarResponse?.movies
+                if(simiar != null){
+                    for(sm in simiar){
+                        val newSM = SimilarMovies(movieId = movie.id,similarMovieId = sm.id)
+                        db!!.movieDao().insertAll(sm)
+                        db!!.similarMoviesDao().insert(newSM)
+                    }
+                }
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                return@withContext null
+            }
+        }
+    }
+    suspend fun getMovieDB(context: Context,id:Long) : Movie {
+        return withContext(Dispatchers.IO) {
+            var db = AppDatabase.getInstance(context)
+            var movie = db!!.movieDao().findById(id)
+            return@withContext movie
+        }
+    }
+    suspend fun getCastDB(context: Context,id:Long) : List<Cast> {
+        return withContext(Dispatchers.IO){
+            var db = AppDatabase.getInstance(context)
+            var cast = db!!.movieDao().getMovieAndCastById(id)
+            return@withContext cast.cast
+        }
+    }
+    suspend fun getSimilarMoviesDB(context: Context,id:Long): List<Movie> {
+        return withContext(Dispatchers.IO){
+            var db = AppDatabase.getInstance(context)
+            var similarMovies = db!!.movieDao().getSimilarMoviesById(id)
+            return@withContext similarMovies.similarMovies
+        }
+    }
     fun getRecentMovies() : List<Movie> {
         return recentMovies();
     }
