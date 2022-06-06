@@ -11,27 +11,11 @@ import kotlinx.coroutines.launch
 import ba.unsa.etf.cineaste.data.Result
 
 
-class MovieListViewModel(
-) {
+class MovieListViewModel(private val context: Context) {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    fun getFavorites(context: Context, onSuccess: (movies: List<Movie>) -> Unit,
-                     onError: () -> Unit){
-
-        // Create a new coroutine on the UI thread
-        scope.launch{
-
-            // Make the network call and suspend execution until it finishes
-            val result = MovieRepository.getFavoriteMovies(context)
-
-            // Display result of the network request to the user
-            when (result) {
-                is List<Movie> -> onSuccess?.invoke(result)
-                else-> onError?.invoke()
-            }
-        }
-    }
+    val favoriteMovies = MovieRepository.getFavorites(context)
 
     fun getRecentMovies():List<Movie>{
         return MovieRepository.getRecentMovies();

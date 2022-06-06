@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ba.unsa.etf.cineaste.MovieDetailActivity
@@ -20,7 +21,7 @@ class FavoriteMoviesFragment : Fragment() {
 
     private lateinit var favoriteMovies: RecyclerView
     private lateinit var favoriteMoviesAdapter: MovieListAdapter
-    private var movieListViewModel =  MovieListViewModel()
+    private lateinit var movieListViewModel : MovieListViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view =  inflater.inflate(R.layout.favorites_fragment, container, false)
@@ -28,11 +29,12 @@ class FavoriteMoviesFragment : Fragment() {
         favoriteMovies.layoutManager = GridLayoutManager(activity, 2)
         favoriteMoviesAdapter = MovieListAdapter(arrayListOf()) { movie,view1,view2 -> showMovieDetails(movie,view1,view2) }
         favoriteMovies.adapter=favoriteMoviesAdapter
-        context?.let {
-            movieListViewModel.getFavorites(
-                it,onSuccess = ::onSuccess,
-                onError = ::onError)
+        val moviesObserver = Observer<List<Movie>> { movies ->
+            favoriteMoviesAdapter.updateMovies(movies)
         }
+        context?.let { movieListViewModel= MovieListViewModel(it) }
+        movieListViewModel.favoriteMovies.observe(this, moviesObserver)
+
         return view;
     }
 

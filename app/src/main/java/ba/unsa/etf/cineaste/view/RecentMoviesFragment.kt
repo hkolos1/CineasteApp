@@ -21,7 +21,7 @@ class RecentMoviesFragment : Fragment() {
 
     private lateinit var recentMovies: RecyclerView
     private lateinit var recentMoviesAdapter: MovieListAdapter
-    private var movieListViewModel =  MovieListViewModel()
+    private lateinit var movieListViewModel: MovieListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,9 @@ class RecentMoviesFragment : Fragment() {
               onSuccess = ::onSuccess,
               onError = ::onError
           )*/
-        movieListViewModel.getUpcoming2( onSuccess = ::onSuccess,
+
+        context?.let { movieListViewModel= MovieListViewModel(it) }
+        movieListViewModel!!.getUpcoming2( onSuccess = ::onSuccess,
             onError = ::onError)
         return view;
     }
